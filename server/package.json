@@ -1,0 +1,25 @@
+{
+  "name": "shm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "pm": "pm2 start server.js --node-args=\"--harmony\" --name simple-home-m --log-date-format \"DD-MM-YYYY HH:mm Z\""
+  },
+  "author": "fguler",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^7.2.0",
+    "dialogflow": "^0.6.0",
+    "dotenv": "^6.0.0",
+    "fast-csv": "^2.4.1",
+    "hapi": "^17.5.0",
+    "joi": "^13.4.0",
+    "mongoose": "^5.1.5",
+    "ping": "^0.2.2",
+    "puppeteer": "^1.5.0",
+    "telegraf": "^3.21.2"
+  }
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./chart.bundle.js"></script>
+    <title>Chart</title>
+
+</head>
+
+<body>
+
+    <canvas width="800" height="600" id="myChart" ></canvas>
+
+    <script type="text/javascript">
+
+        function drawChart({ config }) {
+            let ctx = document.getElementById("myChart").getContext('2d');
+            let myChart = new Chart(ctx, config);
+
+        }
+
+    </script>
+</body>
+
+</html>
