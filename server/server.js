@@ -4,11 +4,7 @@ const Hapi = require("hapi");
 const Bot = require("./src/bot/bot");
 const BackTasks = require("./src/utils/backgroundTasks")();
 const Mongoose = require('mongoose');
-process.env.GOOGLE_APPLICATION_CREDENTIALS=Path.join(process.cwd(),process.env.GOOGLE_APPLICATION_CREDENTIALS);
-
-// Use native promises
-Mongoose.Promise = global.Promise;
-
+process.env.GOOGLE_APPLICATION_CREDENTIALS = Path.join(process.cwd(), process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
 
 const server = Hapi.server({
@@ -47,7 +43,13 @@ const start = async () => {
     await server.start();
 
     //connect to mongoDB
-    await Mongoose.connect(process.env.MONGODB_MLAP_URL);
+    Mongoose.Promise = global.Promise; // Use native promises
+
+    const mongoOptions = {
+        reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+        reconnectInterval: 2000, // Reconnect every 2000ms
+    };
+    await Mongoose.connect(process.env.MONGODB_MLAP_URL, mongoOptions);
     console.log("MongoDB Connected...")
 
     // start bot
@@ -70,7 +72,7 @@ start().then((server) => {
 
 
 
-const gracefulShutdown=async(signal,code)=>{
+const gracefulShutdown = async (signal, code) => {
 
     try {
         await server.stop();
