@@ -1,29 +1,90 @@
-import time, micropython,urequests,ujson
+import time
+import micropython
+import urequests
+import ujson
 import machine
-from machine import Pin
+from machine import Pin, Timer
+import gc
 micropython.alloc_emergency_exception_buf(100)
 
-ONE_MINUTE=60000
+ONE_MINUTE_IN_MS = 60000
 
-SERVER_URL="http://192.168.1.101:7788"
-#SERVER_URL="http://192.168.1.25:7788"
-
-pin=Pin(5,Pin.IN)#D01 on the boart
+SERVER_URL = "http://192.168.1.101:7788"
+# SERVER_URL="http://192.168.1.25:7788"
 
 
-#sends sensor data to server
-def sendToServer(path,data):
-    headers = {'Content-Type': 'application/json'} 
-    url=SERVER_URL+path
-    
+def getDeltaMs(start=0):
+    delta = time.ticks_diff(time.ticks_ms(), start)
+    return delta
+
+# sends sensor data to server
+def sendToServer(path, data):
+    headers = {'Content-Type': 'application/json'}
+    url = SERVER_URL+path
+
     try:
-        jdata=ujson.dumps(data)
-        response = urequests.post(url,data=jdata, headers=headers)
+        jdata = ujson.dumps(data)
+        response = urequests.post(url, data=jdata, headers=headers)
         return response
     except Exception:
         print("Error occured while sending data to server")
 
-#read sensor status and inform server
+    gc.collect()
+
+
+# class for leak alert
+class Leak:
+    def __init__(self):
+        self.leakActionRef = self.leakAction
+        self.pin = Pin(5, Pin.IN)  # D01 on the boart
+        self.timeOutTimer = Timer(-1)
+        self.lastAlertTime = 0
+        self.responseTime = ONE_MINUTE_IN_MS*15
+
+    def respond(self):
+        path = "/api/devices/leakAlert"
+        data = {"leak": True}
+        sendToServer(path, data)
+
+    def readSensorState(self):
+        print("reading sensor status")
+        count = 0
+        i = 0
+        pValue = 0
+
+        while i < 3:
+            pValue = self.pin.value()
+            count += pValue
+            time.sleep_ms(500)
+            i += 1
+
+        return count
+
+    def leakAction(self, _):
+
+        state = self.readSensorState()
+        delta = getDeltaMs(self.lastAlertTime)
+        isItTime = (delta >= self.responseTime)
+
+        if state < 3 and isItTime:
+            print("leak alert")
+            self.lastAlertTime = time.ticks_ms()
+            self.respond()
+
+    def start(self):
+        # self.timeOutTimer.deinit()
+        self.timeOutTimer.init(
+            period=10000, mode=Timer.PERIODIC, callback=self.cb)
+
+    def cb(self, t):
+        micropython.schedule(self.leakActionRef, 0)
+
+
+leak = Leak()
+leak.start()
+
+
+""" #read sensor status and inform server
 def readSensorState():
     print("reading sensor status")
     count=0
@@ -63,34 +124,4 @@ if machine.reset_cause() == machine.DEEPSLEEP_RESET:
 else:
     print('power on or hard reset')
     time.sleep_ms(10000)
-    goDeepSleep()
-
-
-
-
-""" #class for leak alert
-class Leak:
-    def __init__(self):
-        self.leakActionRef=self.leakAction
-        self.pin=Pin(5,Pin.IN)#D01 on the boart
-        self.timeOutTimer=Timer(-1)
-    
-    def leakAction(self,_):
-
-        if not self.pin.value():
-            print("leak alert")
-            path="/api/devices/leakAlert"
-            data={"leak":True}
-            sendToServer(path,data)
-        
-    def start(self):
-        #self.timeOutTimer.deinit()
-        self.timeOutTimer.init(period=10000, mode=Timer.PERIODIC, callback=self.cb)
-
-
-    def cb(self,t):
-        micropython.schedule(self.leakActionRef, 0)
-
-leak=Leak()
-leak.start()
- """
+    goDeepSleep() """

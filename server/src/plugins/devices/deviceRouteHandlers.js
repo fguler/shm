@@ -2,13 +2,6 @@ const Bot = require("../../bot/bot");
 const Alarm = require("../../raspi/alarm/alarm");
 const AmbValuesM = require("../../models/ambiance");
 
-// module stated for temporary calculations
-let state = {
-    leakTimeOut: 60000 * 10,
-    leakLastRead: 0
-};
-
-
 
 module.exports = () => {
 
@@ -27,30 +20,26 @@ module.exports = () => {
     };
 
 
-
     // triggred when there is a leak alert at home
     const leakAlert = async (request, h) => {
+        let msg = "Leak alert has been trigered, check the house!";
 
-        let now = Date.now();
-        let msg = "Evde su sızıntısı tespit edildi!";
+        try {
+            let alarmFire = await Alarm.shouldAlarmFire();
 
-        if ((now - state.leakLastRead) >= state.leakTimeOut) {
-            state.leakLastRead = now;
-
-            try {
-
-                await Bot.sendMessageToAllUsers(msg); // returns promise
-                await Alarm.fire(); // returns promise
-
-            } catch (error) {
-                console.error(error);
+            if (alarmFire) {
+                await Bot.sendMessageToAllUsers(msg);
+                await Alarm.fire();
             }
 
+        } catch (error) {
+            console.error(error);
         }
 
         return { response: "ok." };
 
     };
+
 
     const doorAlert = async (request, h) => {
 
@@ -60,15 +49,13 @@ module.exports = () => {
             let alarmFire = await Alarm.shouldAlarmFire();
 
             if (alarmFire) {
-
                 await Bot.sendMessageToAllUsers(msg);
-                //await Alarm.fire();
+                await Alarm.fire();
             }
 
         } catch (error) {
             console.error(error);
         }
-
 
         return { response: "ok." };
 
@@ -109,6 +96,8 @@ module.exports = () => {
         return { response: "ok." };
 
     };
+
+    
 
 
     return {
