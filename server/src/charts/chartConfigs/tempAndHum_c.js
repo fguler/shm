@@ -28,7 +28,7 @@ module.exports=(chartData)=>{
             responsive: true,
             title: {
                 display: true,
-                text: 'Last 12 Hours Temp and Humidity'
+                text: chartData.chartName
             },
             scales: {
                 xAxes: [{

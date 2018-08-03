@@ -47,7 +47,6 @@ class Leak:
         sendToServer(path, data)
 
     def readSensorState(self):
-        print("reading sensor status")
         count = 0
         i = 0
         pValue = 0
@@ -57,7 +56,6 @@ class Leak:
             count += pValue
             time.sleep_ms(500)
             i += 1
-
         return count
 
     def leakAction(self, _):
@@ -72,7 +70,6 @@ class Leak:
             self.respond()
 
     def start(self):
-        # self.timeOutTimer.deinit()
         self.timeOutTimer.init(
             period=10000, mode=Timer.PERIODIC, callback=self.cb)
 

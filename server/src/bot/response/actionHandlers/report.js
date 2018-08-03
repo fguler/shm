@@ -10,9 +10,9 @@ module.exports = () => {
             nightModeTimeRange
         } = await Parameter.findOne({}).exec();
 
-        return `Residents are ${areUsersAtHome ? "-at home-" : "-not at home-"}\n` +
-            `Alarm is ${isAlarmActivated ? "-activated-" : "-not activated-"}\n`+
-            `Night mode is between ${nightModeTimeRange.start} and ${nightModeTimeRange.end}.`
+        return `-Residents are ${areUsersAtHome ? "at home-" : "not at home."}\n` +
+            `-Alarm is ${isAlarmActivated ? "activated-" : "not activated."}\n`+
+            `-Night mode is between ${nightModeTimeRange.start} and ${nightModeTimeRange.end}.`
     };
 
 
