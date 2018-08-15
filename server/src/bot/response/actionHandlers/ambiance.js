@@ -4,8 +4,6 @@ const Utils = require("../../../utils/utils");
 
 
 
-
-
 module.exports = () => {
 
     const getLastAmbianceRecord = async () => {
@@ -18,10 +16,10 @@ module.exports = () => {
             limit(1).exec();
 
         if (docs) {
-            let { temp, hum, gas, hpa, createdAt } = docs[0];
+            let { temp, hum, air, hpa, createdAt } = docs[0];
             createdAt = Utils.dateFromString(createdAt);
 
-            msg = `Temperature: ${temp}°C, Humidity : ${hum}%,\nAir Pressure : ${hpa} hpa, Air Quality : ${gas} \n(${createdAt})`;
+            msg = `Temperature: ${temp}°C, Humidity : ${hum}%,\nAir Pressure : ${hpa} hpa, Air Quality : ${air} \n(${createdAt})`;
 
         } else {
             msg = "There is no record in the database!"

@@ -20,11 +20,11 @@ const getDataFromDb = (limit) => {
 
 // turn mongoose objects to plain js objects
 const normalizeObject = (doc) => {
-    let { id, temp, hum, gas, hpa, createdAt } = doc;
+    let { id, temp, hum, air, hpa, createdAt } = doc;
     let [date, time] = Utils.dateFromString(createdAt).split("-");
     time = time.trim();
     date = date.trim();
-    return { id, temp, hum, gas, hpa, date, time }
+    return { id, temp, hum, air, hpa, date, time }
 };
 
 //write data to csv file

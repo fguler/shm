@@ -21,7 +21,6 @@ module.exports = () => {
 
             case timeRangeOptions.HOURLY:
                 filePath = await chart.hourlyTempAndHum();
-                console.log(filePath);
                 stream = FS.createReadStream(filePath);
                 break;
 
