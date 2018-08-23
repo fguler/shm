@@ -4,6 +4,7 @@ const Hapi = require("hapi");
 const Bot = require("./src/bot/bot");
 const BackTasks = require("./src/utils/backgroundTasks")();
 const Mongoose = require('mongoose');
+
 process.env.GOOGLE_APPLICATION_CREDENTIALS = Path.join(process.cwd(), process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
 
@@ -19,6 +20,10 @@ const plugins = [
     {
         plugin: require("./src/plugins/devices/devices"),
         options: {}
+    },
+    {
+        plugin: require("./src/plugins/mqtt/msgInjector"),
+        options: {}
     }
 ];
 
@@ -33,7 +38,7 @@ const start = async () => {
         path: "/",
         handler: function (request, h) {
 
-            return "hello from server";
+            return "index";
 
         }
     });
@@ -52,12 +57,12 @@ const start = async () => {
     await Mongoose.connect(process.env.MONGODB_MLAP_URL, mongoOptions);
     console.log("MongoDB Connected...")
 
-    // start bot
+    // start telegram bot
     Bot.start();
+
 
     // start repetitive tasks
     BackTasks.run();
-
 
     return server;
 }

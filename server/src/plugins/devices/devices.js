@@ -5,7 +5,6 @@ const handlers=Handlers();
 
 const register=async function (server, options) {
 
-
     server.route({
         method: "POST",
         path: "/api/devices/ambiance",
@@ -17,6 +16,22 @@ const register=async function (server, options) {
                     hum:Joi.number().required(),
                     air:Joi.number().required(),
                     hpa:Joi.number().required()
+                }
+            }
+        }
+    });
+
+
+    server.route({
+        method:"POST",
+        path:"/api/devices/register",
+        handler:handlers.registerNewDevice,
+        options:{
+            validate:{
+                payload:{
+                    deviceId:Joi.string().required(),
+                    definition:Joi.string().required(),
+                    comment:Joi.string()
                 }
             }
         }

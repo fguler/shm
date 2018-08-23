@@ -1,6 +1,8 @@
+const Boom = require('boom');
 const Bot = require("../../bot/bot");
 const Alarm = require("../../raspi/alarm/alarm");
 const AmbValuesM = require("../../models/ambiance");
+const Device = require("../../models/device");
 
 
 module.exports = () => {
@@ -13,6 +15,23 @@ module.exports = () => {
             await ambValues.save();
         } catch (error) {
             console.log(error.message)
+            return Boom.badRequest(error.message)
+        }
+
+        return { response: "ok." };
+
+    };
+
+    //register new IoT device
+    const registerNewDevice=async (request,h)=>{
+
+        try {
+            const device=new Device({...request.payload});
+            await device.save();
+            
+        } catch (error) {
+            console.log(error.message)
+            return Boom.badRequest(error.message)
         }
 
         return { response: "ok." };
@@ -34,6 +53,7 @@ module.exports = () => {
 
         } catch (error) {
             console.error(error);
+            return Boom.badRequest(error.message)
         }
 
         return { response: "ok." };
@@ -55,6 +75,7 @@ module.exports = () => {
 
         } catch (error) {
             console.error(error);
+            return Boom.badRequest(error.message)
         }
 
         return { response: "ok." };
@@ -77,6 +98,7 @@ module.exports = () => {
 
         } catch (error) {
             console.error(error);
+            return Boom.badRequest(error.message)
         }
 
 
@@ -105,6 +127,7 @@ module.exports = () => {
         leakAlert,
         doorAlert,
         gasAlert,
+        registerNewDevice,
         alarmTest
     };
 
