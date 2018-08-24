@@ -64,6 +64,12 @@ const register=async function (server, options) {
         handler:handlers.doorAlert
     });
 
+    server.route({
+        method:"POST",
+        path:"/api/devices/checkIn",
+        handler:handlers.deviceCheckIn
+    });
+
 /*     server.route({
         method:"POST",
         path:"/api/devices/alarmTest",

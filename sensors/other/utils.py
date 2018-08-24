@@ -33,7 +33,7 @@ class CheckIn():
     
 
 class WDT():
-    def __init__(self,interval=10000):
+    def __init__(self,interval=60000):
         self.interval=interval
         self.timer = Timer(-1)
         self._resetRef=self._reset

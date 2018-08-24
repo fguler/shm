@@ -14,7 +14,7 @@ module.exports = () => {
             const ambValues = new AmbValuesM({ ...request.payload });
             await ambValues.save();
         } catch (error) {
-            console.log(error.message)
+            console.error(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -30,7 +30,7 @@ module.exports = () => {
             await device.save();
             
         } catch (error) {
-            console.log(error.message)
+            console.error(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -52,7 +52,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error);
+            console.error(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -74,7 +74,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error);
+            console.error(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -97,7 +97,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error);
+            console.error(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -113,10 +113,31 @@ module.exports = () => {
             let alarmFire = await Alarm.shouldAlarmFire();
             console.log("shouldAlarmFire", alarmFire);
         } catch (error) {
-            console.error(error);
+            console.error(error.stack)
+            return Boom.badRequest(error.message)
         }
         return { response: "ok." };
 
+    };
+
+    const deviceCheckIn = async (request, h) => {
+    
+        try {
+            const dev=await Device.findOne({deviceId:request.payload.id}).exec();
+
+            if(dev){
+                dev.lastCheckIn=new Date()
+                await dev.save();
+            }else{
+                throw new Error(`Device with id ${request.payload.id} does not exist!`)
+            }
+        } catch (error) {
+            console.error(error.stack);
+            return Boom.badRequest(error.message)
+        }
+
+        return { response: "ok." };
+        
     };
 
     
@@ -128,6 +149,7 @@ module.exports = () => {
         doorAlert,
         gasAlert,
         registerNewDevice,
+        deviceCheckIn,
         alarmTest
     };
 

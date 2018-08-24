@@ -14,11 +14,11 @@ class AES128CBC {
         let plainText = "";
 
         [iv, cipherText] = cipherTextWithIV.split(":"); // split iv and ciphertext
-        iv = Buffer.from(iv, "hex");
+        iv = Buffer.from(iv, "base64");
 
         const decipher = Crypto.createDecipheriv("aes-128-cbc", this.key, iv);
 
-        plainText = decipher.update(cipherText, 'hex', 'utf8');
+        plainText = decipher.update(cipherText, 'base64', 'utf8');
         plainText += decipher.final('utf8');
 
         return plainText;
@@ -33,10 +33,10 @@ class AES128CBC {
 
         const cipher = Crypto.createCipheriv('aes-128-cbc', this.key, iv);
 
-        cipherText = cipher.update(plainText, 'utf8', 'hex');
-        cipherText += cipher.final('hex');
+        cipherText = cipher.update(plainText, 'utf8', 'base64');
+        cipherText += cipher.final('base64');
 
-        cipherText = iv.toString("hex") + ":" + cipherText;
+        cipherText = iv.toString("base64") + ":" + cipherText;
 
         return cipherText;
     }
