@@ -21,7 +21,6 @@ class CheckIn():
     def send(self):
         top="{}{}".format(self.appId,"/devices/checkIn")
         msg={"id":self.clientId}
-        msg=ujson.dumps(msg)
         self.c.publish(top, msg)
 
     def pool(self):
@@ -42,9 +41,13 @@ class WDT():
     def feed(self):
         self.timer.deinit()
         self.timer.init(period=self.interval, mode=Timer.ONE_SHOT, callback=self.cb)
+
+    def cancel(self):
+        print("WDT canceled!")
+        self.timer.deinit()
     
     def _reset(self,_):
-        print("WDT restart")
+        print("WDT restart!")
         machine.reset()
 
     def cb(self,t):
@@ -71,7 +74,11 @@ class MqttClient():
     def _sub_cb(self,topic,msg):
         try:
             msg=self.aes.decrypt(msg.decode())
+            msg=ujson.loads(msg)
             self.mCb(topic.decode(),msg)
+
+            print("A message has been received!")
+            print(topic.decode(),msg)
         except Exception:
             print("Incoming MQTT message error!",topic.decode())
 
@@ -88,6 +95,10 @@ class MqttClient():
     
     def publish(self,topic,msg):
         try:
+            print("A message is being sent!")
+            print(topic,msg)
+
+            msg=ujson.dumps(msg)
             msg=self.aes.encrypt(msg)
             self.c.publish(topic.encode(), msg.encode())
         except Exception:

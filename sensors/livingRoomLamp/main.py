@@ -33,10 +33,8 @@ class Lamp():
     
 lamp=Lamp()
 
-
 def onMessage(topic, msg):
-    msg=ujson.loads(msg)
-
+    
     if topic==TOPIC_LAMP:
         if msg["status"]:
             lamp.turnOn()
@@ -50,6 +48,7 @@ def onMessage(topic, msg):
 
 mc.setCallback(onMessage)
 mc.connect()
+print("connected to MQTT broker!")
 mc.subscribe(TOPIC_LAMP)
 mc.subscribe(TOPIC_ALARM)
 

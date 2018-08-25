@@ -8,6 +8,7 @@ const register = async function (server, options) {
 
     // injects incoming messages into server
     const onMessage = async (topic, message) => {
+        
         injOptions = {
             url: "",
             method: "POST",
