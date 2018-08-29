@@ -11,7 +11,8 @@ module.exports = () => {
     const saveAmbianceValues = async (request, h) => {
 
         try {
-            const ambValues = new AmbValuesM({ ...request.payload });
+            let { temp, air, hpa, hum } = request.payload
+            const ambValues = new AmbValuesM({ temp, air, hpa, hum });
             await ambValues.save();
         } catch (error) {
             console.error(error.stack)
@@ -23,12 +24,12 @@ module.exports = () => {
     };
 
     //register new IoT device
-    const registerNewDevice=async (request,h)=>{
+    const registerNewDevice = async (request, h) => {
 
         try {
-            const device=new Device({...request.payload});
+            const device = new Device({ ...request.payload });
             await device.save();
-            
+
         } catch (error) {
             console.error(error.stack)
             return Boom.badRequest(error.message)
@@ -121,14 +122,14 @@ module.exports = () => {
     };
 
     const deviceCheckIn = async (request, h) => {
-    
-        try {
-            const dev=await Device.findOne({deviceId:request.payload.id}).exec();
 
-            if(dev){
-                dev.lastCheckIn=new Date()
+        try {
+            const dev = await Device.findOne({ deviceId: request.payload.id }).exec();
+
+            if (dev) {
+                dev.lastCheckIn = new Date()
                 await dev.save();
-            }else{
+            } else {
                 throw new Error(`Device with id ${request.payload.id} does not exist!`)
             }
         } catch (error) {
@@ -137,10 +138,10 @@ module.exports = () => {
         }
 
         return { response: "ok." };
-        
+
     };
 
-    
+
 
 
     return {

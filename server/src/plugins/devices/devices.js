@@ -15,7 +15,8 @@ const register=async function (server, options) {
                     temp:Joi.number().required(),
                     hum:Joi.number().required(),
                     air:Joi.number().required(),
-                    hpa:Joi.number().required()
+                    hpa:Joi.number().required(),
+                    id:Joi.string().required()
                 }
             }
         }
@@ -39,12 +40,13 @@ const register=async function (server, options) {
 
     server.route({
         method:"POST",
-        path:"/api/devices/gasAlarm",
+        path:"/api/devices/gasAlert",
         handler:handlers.gasAlert,
         options:{
             validate:{
                 payload:{
-                    gasAlarm:Joi.bool().required()
+                    status:Joi.bool().required(),
+                    id:Joi.string().required()
                 }
             }
         }
@@ -67,7 +69,14 @@ const register=async function (server, options) {
     server.route({
         method:"POST",
         path:"/api/devices/checkIn",
-        handler:handlers.deviceCheckIn
+        handler:handlers.deviceCheckIn,
+        options:{
+            validate:{
+                payload:{
+                    id:Joi.string().required()
+                }
+            }
+        }
     });
 
 /*     server.route({

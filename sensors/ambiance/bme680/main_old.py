@@ -1,3 +1,4 @@
+import micropython
 import time
 import urequests
 import ujson
@@ -6,27 +7,33 @@ from i2c import I2CAdapter
 from machine import Pin
 from machine import Timer
 import gc
-from utils import WDT,CheckIn,MqttClient
 
+micropython.alloc_emergency_exception_buf(100)
 ONE_MINUTE_IN_MS = 60000
 
 i2c_dev = I2CAdapter(scl=Pin(19), sda=Pin(18), freq=100000)
 sensor = bme680.BME680(i2c_device=i2c_dev, i2c_addr=bme680.I2C_ADDR_SECONDARY)
 sensor.set_gas_heater_profile(320, 150)
 
-#MQTT
-mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,MQTT_BRK,1200)
-mc.connect()
-print("connected to MQTT broker!")
-
-TOPIC_AMB="{}{}".format(MQTT_APP_ID,"/devices/ambiance")
-TOPIC_GAS="{}{}".format(MQTT_APP_ID,"/devices/gasAlert")
-#MQTT
-
 
 def getDeltaMs(start=0):
     delta = time.ticks_diff(time.ticks_ms(), start)
     return delta
+
+
+# sends sensor data to server
+def sendToServer(path, data):
+    headers = {'Content-Type': 'application/json'}
+    url = SERVER_URL+path
+
+    try:
+        jdata = ujson.dumps(data)
+        response = urequests.post(url, data=jdata, headers=headers)
+        return response
+    except Exception:
+        print("Error occured while sending data to server")
+
+    gc.collect()
 
 
 # reads sensor data
@@ -117,8 +124,9 @@ class AirQuality:
             self.gasBaseline = round(sum(self.data[-30:])/30)  # calculate baseline
 
     def send(self):
-        msg = {"status": True,"id":MQTT_CLIENT_ID}
-        mc.publish(TOPIC_GAS, msg)
+        path = "/api/devices/gasAlarm"
+        payload = {"gasAlarm": True}
+        sendToServer(path, payload)
 
     def measureTimePassed(self):
         delta = getDeltaMs(self.lastTimeDataSent)
@@ -139,7 +147,7 @@ class Ambiance:
         self.air=air
         self.lastTime = 0
         self.response_time = ONE_MINUTE_IN_MS*30
-        self.sensorData = {"temp": 0, "hum": 0, "air": 0, "hpa": 0,"id":MQTT_CLIENT_ID}
+        self.sensorData = {"temp": 0, "hum": 0, "air": 0, "hpa": 0}
 
     def measureTimePassed(self):
         delta = getDeltaMs(self.lastTime)
@@ -147,7 +155,9 @@ class Ambiance:
         return result
 
     def send(self):
-        mc.publish(TOPIC_AMB, self.sensorData)
+        path = "/api/devices/ambiance"
+        sendToServer(path, self.sensorData)
+        print("Ambiance data sent to server")
 
     def run(self):
         sData = getSensorData()
@@ -158,6 +168,8 @@ class Ambiance:
 
         air = self.air.calculateAirQuality(sData["gas"], sData["hum"])
         self.sensorData["air"] = air
+
+        print(self.sensorData)
 
         #trigers alarm if air quality score drops below 60
         if air<60:
@@ -172,14 +184,9 @@ class Ambiance:
 
 airObj = AirQuality()
 amb = Ambiance(airObj)
-chk=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
-wdt=WDT()
-
 
 
 # Run loop
 while True:
     amb.run()
-    chk.pool()
-    wdt.feed()
     time.sleep(2)
