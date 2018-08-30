@@ -1,4 +1,4 @@
-const ChartConfig = require("./chartConfigs/tempAndHum_c");
+const ChartConfig = require("./chartConfigs/airQuality_c");
 const puppeteer = require('puppeteer');
 const Utils = require("../utils/utils");
 const AmbianceModel = require("../models/ambiance");
@@ -26,85 +26,6 @@ const labelsAndDataFromMap = (map) => {
 
 
     return labelsAndData;
-};
-
-
-const prepareChartData = (timeRange, records) => {
-
-    const labelsAndData = {
-        chartName: "NaN",
-        labelDefinition: "NaN",
-        temp: {
-            labels: [],
-            data: []
-        },
-        hum: {
-            labels: [],
-            data: []
-        }
-    };
-
-    const mapTemp = new Map();
-    const mapHum = new Map();
-
-
-    switch (timeRange) {
-
-        case timeRangeOptions.HOURLY:
-            labelsAndData.labelDefinition = "Hours";
-            break;
-        case timeRangeOptions.WEEKLY:
-            labelsAndData.labelDefinition = "Weeks";
-            break;
-
-        default:
-            throw Error("Unknown [timeRange] in [prepareChartData] function");
-    }
-
-    // loop docs coming from mongoDB
-    records.forEach(doc => {
-        let { temp, hum, createdAt } = doc;
-        let label;
-
-        // decide label category
-        if (timeRange == timeRangeOptions.HOURLY) {
-            label = new Date(createdAt).getHours("tr-TR", { hour12: false }); // label is hour
-        }else if(timeRange == timeRangeOptions.WEEKLY){
-            label=Moment(createdAt).isoWeek(); // label is week
-        }
-
-        // add values to maps
-        if (mapTemp.has(label)) {
-            // temp values
-            let valTemp = mapTemp.get(label);
-            valTemp.push(parseInt(temp));
-            mapTemp.set(label, valTemp);
-
-            // hum values
-            let valHum = mapHum.get(label);
-            valHum.push(parseInt(hum));
-            mapHum.set(label, valHum);
-
-        } else {
-            mapTemp.set(label, [parseInt(temp)]); // add label value to Map with firs value
-            mapHum.set(label, [parseInt(hum)]); // add label value to Map with firs value
-        }
-
-
-    });
-
-    //turn maps into label and data arrays form compatible with by Chart.js
-    let { labels, data } = labelsAndDataFromMap(mapTemp);
-    labelsAndData.temp.labels = [...labels];
-    labelsAndData.temp.data = [...data];
-
-    ({ labels, data } = labelsAndDataFromMap(mapHum));
-    labelsAndData.hum.labels = [...labels];
-    labelsAndData.hum.data = [...data];
-
-
-    return labelsAndData;
-
 };
 
 // fetch docs from mongoDB
@@ -136,6 +57,64 @@ const getRecordsfromDB = async (timeRange) => {
 
 };
 
+const prepareChartData = (timeRange, records) => {
+
+    const labelsAndData = {
+        chartName: "NaN",
+        labelDefinition: "NaN",
+        air: {
+            labels: [],
+            data: []
+        }
+    };
+
+    const mapAir = new Map();
+ 
+    switch (timeRange) {
+
+        case timeRangeOptions.HOURLY:
+            labelsAndData.labelDefinition = "Hours";
+            break;
+        case timeRangeOptions.WEEKLY:
+            labelsAndData.labelDefinition = "Weeks";
+            break;
+
+        default:
+            throw Error("Unknown [timeRange] in [prepareChartData] function");
+    }
+
+    // loop docs coming from mongoDB
+    records.forEach(doc => {
+        let { air, createdAt } = doc;
+        let label;
+
+        // decide label category
+        if (timeRange == timeRangeOptions.HOURLY) {
+            label = new Date(createdAt).getHours("tr-TR", { hour12: false }); // label is hour
+        }else if(timeRange == timeRangeOptions.WEEKLY){
+            label=Moment(createdAt).isoWeek(); // label is week
+        }
+
+        // add values to maps
+        if (mapAir.has(label)) {
+            let valAir = mapAir.get(label); // get the value which is an array
+            valAir.push(parseInt(air));
+            mapAir.set(label, valAir);
+
+        } else {
+            mapAir.set(label, [parseInt(air)]); // add label value to Map with firs value
+        }
+    });
+
+    //turn maps into label and data arrays form that is compatible with by Chart.js
+    let { labels, data } = labelsAndDataFromMap(mapAir);
+    labelsAndData.air.labels = [...labels];
+    labelsAndData.air.data = [...data];
+
+    return labelsAndData;
+
+};
+
 const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
     //const browser = await puppeteer.launch({ headless: true });
@@ -154,7 +133,7 @@ const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
     }, { config });
 
     await Utils.sleep(1000);
-    const outputPath = tmpPath + 'tempAndHum.png';
+    const outputPath = tmpPath + 'airQuality.png';
 
     await page.screenshot({ path: outputPath });
 
@@ -164,50 +143,28 @@ const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
 };
 
-
 module.exports = ({ htmlFilePath, tmpPath }) => {
-
-
-    // Temperature and Humudity result of last 12 hours
-    const hourlyTempAndHum = async () => {
+    // Air Quality chart of last 12 hours
+    const hourlyAirQuality = async () => {
 
         let records = await getRecordsfromDB(timeRangeOptions.HOURLY);
         const chartData = prepareChartData(timeRangeOptions.HOURLY, records);
-        chartData.chartName = "Last 12 Hours Temperature and Humidity";
+        chartData.chartName = "Last 12 Hours Air Quality";
 
         const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
 
-        return chartPath;
+        return chartPath
 
     };
-
-
-    // Temperature and Humudity result of last 4 weeks
-    const weeklyTempAndHum = async () => {
-
-        let records = await getRecordsfromDB(timeRangeOptions.WEEKLY);
-        const chartData = prepareChartData(timeRangeOptions.WEEKLY, records);
-        chartData.chartName = "Last 4 Weeks Temperature and Humidity";
-
-        const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
-
-        return chartPath;
-
-    };
-
 
     return {
-        getTempAndHumChart(){
+        getAirQualityChart(){
             return {
-                hourlyTempAndHum,
-                weeklyTempAndHum,
-                timeRangeOptions
-        
+                timeRangeOptions,
+                hourlyAirQuality      
             };
 
         }
     };
 
-
-
-}
+};

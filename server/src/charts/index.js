@@ -1,12 +1,16 @@
-const Path=require("path");
-const TempAndHum=require("./tempAndHum");
+const Path = require("path");
+const TempAndHum = require("./tempAndHum");
+const AirQuality = require("./airQuality");
 
 
-const htmlFilePath=`file:${Path.join(process.cwd(),"src","charts","assets","chart.html")}`;
+const htmlFilePath = `file:${Path.join(process.cwd(), "src", "charts", "assets", "chart.html")}`;
 
-const tmpPath=Path.join(process.cwd(),"tmp/");
+const tmpPath = Path.join(process.cwd(), "tmp/");
 
-const charts=Object.assign({},TempAndHum({htmlFilePath,tmpPath}));
+const charts = Object.assign({},
+    TempAndHum({ htmlFilePath, tmpPath }),
+    AirQuality({ htmlFilePath, tmpPath })
+);
 
 
-module.exports=charts;
+module.exports = charts;

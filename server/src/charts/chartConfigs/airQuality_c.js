@@ -1,0 +1,56 @@
+
+
+module.exports=(chartData)=>{
+
+
+    var config = {
+        type: 'line',
+        data: {
+            labels: chartData.air.labels,
+            datasets: [{
+                label: 'Air Quality',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                data: chartData.air.data,
+                fill: false,
+                yAxisID: 'y-axis-1',
+            }]
+        },
+        options: {
+
+            responsive: true,
+            title: {
+                display: true,
+                text: chartData.chartName
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: chartData.labelDefinition
+                    }
+                }],
+                yAxes: [{
+                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                    display: true,
+                    position: 'left',
+                    id: 'y-axis-1',
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Score (%)'
+                    },
+                    ticks:{
+                        min:20,
+                        max:100
+                    }
+                }]
+            }
+        }
+    };
+
+
+    return config;
+
+
+};

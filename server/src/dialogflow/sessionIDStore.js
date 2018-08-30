@@ -28,7 +28,7 @@ const sessionStore = {
     get(key) {
         let val = proxyObj[key];
         if (!val) {
-            val = Crypto.randomBytes(10).toString("hex"); // produce new Id if the key is not in the store
+            val = Crypto.randomBytes(8).toString("hex"); // produce new Id if the key is not in the store
             sessionStore.set(key, val);
         }
         return val;

@@ -41,10 +41,16 @@ const register = async function (server, options) {
     const client = await MQTT.connect({ clientId: process.env.MQTT_CLIENT_ID });
     client.setMessageCallback(onMessage)
 
-    // subscribe messages
-    await client.subscribe(MQTT.topics.DEVICES_CHECK_IN);
-    await client.subscribe(MQTT.topics.DEVICES_AMBIANCE_VALUES);
-    await client.subscribe(MQTT.topics.DEVICES_GAS_ALERT);
+    // subscribe topics
+    const subTopics=MQTT.topics.subscribing
+    for(let t in subTopics){
+        await client.subscribe(subTopics[t])
+    }
+
+    
+    //await client.subscribe(MQTT.topics.DEVICES_CHECK_IN);
+    //await client.subscribe(MQTT.topics.DEVICES_AMBIANCE_VALUES);
+    //await client.subscribe(MQTT.topics.DEVICES_GAS_ALERT);
     
 
     //let msg = { status: false }
