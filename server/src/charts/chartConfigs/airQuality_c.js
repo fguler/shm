@@ -1,6 +1,6 @@
 
 
-module.exports=(chartData)=>{
+module.exports = (chartData) => {
 
 
     var config = {
@@ -8,12 +8,12 @@ module.exports=(chartData)=>{
         data: {
             labels: chartData.air.labels,
             datasets: [{
+                fill: "start",
                 label: 'Air Quality',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 data: chartData.air.data,
-                fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y-axis-1'
             }]
         },
         options: {
@@ -40,11 +40,17 @@ module.exports=(chartData)=>{
                         display: true,
                         labelString: 'Score (%)'
                     },
-                    ticks:{
-                        min:20,
-                        max:100
-                    }
+/*                     ticks: {
+                        //min: 20,
+                        //max: 100,
+                        stepSize:2
+                    } */
                 }]
+            },
+            plugins: {
+                filler: {
+                    propagate: true
+                }
             }
         }
     };

@@ -12,11 +12,11 @@ module.exports=(chartData)=>{
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 data: chartData.temp.data,
-                fill: false,
-                yAxisID: 'y-axis-1',
+                fill: "start",
+                yAxisID: 'y-axis-1'
             }, {
                 label: 'Humidity',
-                fill: false,
+                fill: "start",
                 backgroundColor: 'rgba(75, 192, 192,0.5)',
                 borderColor: 'rgba(75, 192, 192,1)',
                 data: chartData.hum.data,
@@ -45,7 +45,7 @@ module.exports=(chartData)=>{
                     id: 'y-axis-1',
                     scaleLabel: {
                         display: true,
-                        labelString: 'Temp'
+                        labelString: 'Temp (°C)'
                     },
                     ticks:{
                         min:0,
@@ -62,7 +62,7 @@ module.exports=(chartData)=>{
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: 'Humidity'
+                        labelString: 'Humidity (%)'
                     },
                     ticks:{
                         min:10,
