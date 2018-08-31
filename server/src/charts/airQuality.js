@@ -117,10 +117,10 @@ const prepareChartData = (timeRange, records) => {
 
 const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
-    const browser = await puppeteer.launch({ headless: true });
+    //const browser = await puppeteer.launch({ headless: true });
 
     // executablePath is necessary on raspberry pi
-    //const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
+    const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
     const page = await browser.newPage();
 
     await page.goto(htmlFilePath);
