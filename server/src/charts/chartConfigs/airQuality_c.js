@@ -1,5 +1,18 @@
 
 
+const calculateMinTick = (data) => {
+
+    let sNum = data.sort()[0];
+    let minValue = (sNum - 10);
+
+    if (minValue <= 0) {
+        minValue = sNum;
+    }
+    minValue = minValue % 2 == 0 ? minValue : minValue - 1;
+    return minValue;
+};
+
+
 module.exports = (chartData) => {
 
 
@@ -40,11 +53,11 @@ module.exports = (chartData) => {
                         display: true,
                         labelString: 'Score (%)'
                     },
-/*                     ticks: {
-                        //min: 20,
-                        //max: 100,
-                        stepSize:2
-                    } */
+                    ticks: {
+                        min: calculateMinTick(chartData.air.data),
+                        max: 100,
+                        stepSize: 2
+                    }
                 }]
             },
             plugins: {
