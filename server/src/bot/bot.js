@@ -1,7 +1,7 @@
 const Telegraf = require('telegraf');
 const Mdlw = require("./middlewares");
-const OutgoingActions=require("./outgoingActions/index")
-const Response=require("./response/");
+const OutgoingActions = require("./outgoingActions/index")
+const Response = require("./response/");
 
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
@@ -12,14 +12,15 @@ const start = () => {
 
     bot.on('text', Response.process)
 
+    bot.catch((err) => {
+        console.log('Telegram Error :', err)
+    });
+
     bot.startPolling();
 
 };
 
-
-
-
-module.exports=Object.assign({},{start},OutgoingActions(bot));
+module.exports = Object.assign({}, { start }, OutgoingActions(bot));
 
 
 

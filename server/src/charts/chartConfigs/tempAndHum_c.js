@@ -49,7 +49,8 @@ module.exports=(chartData)=>{
                     },
                     ticks:{
                         min:0,
-                        max:70
+                        max:70,
+                        stepSize: 5
                     }
                 }, {
                     type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
@@ -66,7 +67,8 @@ module.exports=(chartData)=>{
                     },
                     ticks:{
                         min:10,
-                        max:80
+                        max:80,
+                        stepSize: 5
                     }
                 }]
             }
