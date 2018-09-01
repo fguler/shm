@@ -13,7 +13,7 @@ const start = () => {
     bot.on('text', Response.process)
 
     bot.catch((err) => {
-        console.log('Telegram Error :', err)
+        console.log('Telegram Error :', err);
     });
 
     bot.startPolling();
