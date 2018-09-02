@@ -12,9 +12,9 @@ const start = () => {
 
     bot.on('text', Response.process)
 
-    bot.catch((err) => {
+/*     bot.catch((err) => {
         console.log('Telegram Error :', err);
-    });
+    }); */
 
     bot.startPolling();
 
