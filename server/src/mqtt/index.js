@@ -16,6 +16,7 @@ const mqtt = () => {
         try {
             let msg = aes.decrypt(message.toString());
             msg = JSON.parse(msg);
+            console.log(topic, msg);
             callback(topic, msg);
         } catch (error) {
             console.error(error.stack)
@@ -44,7 +45,6 @@ const mqtt = () => {
     };
 
 
-    
 
     internals.connect=({ clientId, keepalive=1200 })=>{
 
@@ -52,7 +52,7 @@ const mqtt = () => {
 
             try {
 
-                clientRef = MQTT.connect("mqtt://iot.eclipse.org", { clientId, keepalive });
+                clientRef = MQTT.connect(process.env.MQTT_BROKER, { clientId, keepalive });
 
                 clientRef.on('message', onMsg);
 

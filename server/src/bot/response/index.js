@@ -6,6 +6,7 @@ const process=async(ctx)=>{
 
     
     try {
+        //return ctx.reply(ctx.message.text);
         
         const dialogflow=new Dialogflow(ctx.message.from.id)
 
