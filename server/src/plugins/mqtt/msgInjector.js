@@ -8,7 +8,7 @@ const register = async function (server, options) {
 
     // injects incoming messages into server
     const onMessage = async (topic, message) => {
-        
+
         injOptions = {
             url: "",
             method: "POST",
@@ -16,24 +16,23 @@ const register = async function (server, options) {
         };
 
         try {
-            if (message.id) { // every message must have a device id
+            if (!message.id) { // every message must have a device id
+                throw new Error("Message does no have a device Id!");
+            }
+            const dev = await Device.findOne({ deviceId: message.id }).exec();
+            if (!dev) {
+                throw new Error("Device Id in the message is unknown!");
+            }
 
-                const dev = await Device.findOne({ deviceId: message.id }).exec();
-                if (!dev) {
-                    return;
-                }
-
-                if (topic.includes("/")) {
-                    let url = "/api" + topic.slice(topic.indexOf("/"));
-                    injOptions.url = url;
-                    injOptions.payload = message
-                    await server.inject(injOptions);
-                }
-
+            if (topic.includes("/")) {
+                let url = "/api" + topic.slice(topic.indexOf("/"));
+                injOptions.url = url;
+                injOptions.payload = message
+                await server.inject(injOptions);
             }
 
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
         }
     };
 
@@ -42,16 +41,16 @@ const register = async function (server, options) {
     client.setMessageCallback(onMessage)
 
     // subscribe topics
-    const subTopics=MQTT.topics.subscribing
-    for(let t in subTopics){
+    const subTopics = MQTT.topics.subscribing
+    for (let t in subTopics) {
         await client.subscribe(subTopics[t])
     }
 
-    
+
     //await client.subscribe(MQTT.topics.DEVICES_CHECK_IN);
     //await client.subscribe(MQTT.topics.DEVICES_AMBIANCE_VALUES);
     //await client.subscribe(MQTT.topics.DEVICES_GAS_ALERT);
-    
+
 
     //let msg = { status: false }
     //await client.publish(`${process.env.MQTT_APP_ID}/devices/LRoomLamp`, msg);

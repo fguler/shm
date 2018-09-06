@@ -1,6 +1,7 @@
 const MQTT=require("../../../mqtt");
 
 module.exports=()=>{
+    const topics = MQTT.topics.publishing
 
     const internal={};
 
@@ -8,8 +9,8 @@ module.exports=()=>{
         await ctx.reply("Just a second...");
         const client=MQTT.getClient()
         let msg={"status":true};
-        await client.publish(MQTT.topics.LIVING_ROOM_LAMP,msg)
-        return ctx.reply(result.fulfillmentText);
+        await client.publish(topics.LIVING_ROOM_LAMP,msg)
+        await ctx.reply(result.fulfillmentText);
 
     };
 
@@ -17,8 +18,8 @@ module.exports=()=>{
         await ctx.reply("Just a second...");
         const client=MQTT.getClient()
         let msg={"status":false};
-        await client.publish(MQTT.topics.LIVING_ROOM_LAMP,msg)
-        return ctx.reply(result.fulfillmentText);   
+        await client.publish(topics.LIVING_ROOM_LAMP,msg)
+        await ctx.reply(result.fulfillmentText);   
     };
 
     return internal;

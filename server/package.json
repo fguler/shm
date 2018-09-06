@@ -11,7 +11,6 @@
   "author": "fguler",
   "license": "ISC",
   "dependencies": {
-    "async-mqtt": "^1.0.1",
     "boom": "^7.2.0",
     "dialogflow": "^0.6.0",
     "dotenv": "^6.0.0",
@@ -20,6 +19,7 @@
     "joi": "^13.6.0",
     "moment": "^2.22.2",
     "mongoose": "^5.2.12",
+    "mqtt": "^2.18.8",
     "ping": "^0.2.2",
     "puppeteer": "^1.7.0",
     "telegraf": "^3.23.0"

@@ -18,7 +18,8 @@ const process=async(ctx)=>{
         actionName=Actions[actionName];// check if we are interested in this action
 
         if(!actionName || !allRequiredParamsPresent){
-            return ctx.reply(result.fulfillmentText);
+            await ctx.reply(result.fulfillmentText);
+            return;
         }
 
         await actionName(ctx,result) // if the action is in our list, then allow it to handle the response
@@ -26,7 +27,7 @@ const process=async(ctx)=>{
         
     } catch (error) {
         console.log(error)
-        ctx.reply("Sorry, something went wrong 😢");
+        await ctx.reply("Sorry, something went wrong 😢");
     }
 
 };

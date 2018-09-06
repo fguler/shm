@@ -4,7 +4,7 @@ from utils import WDT,CheckIn,MqttClient
 import time
 import ujson
 
-mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,"iot.eclipse.org",1200)
+mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,MQTT_BRK,1200)
 wdt=WDT()
 
 TOPIC_LAMP="{}{}".format(MQTT_APP_ID,"/devices/LRoomLamp")
