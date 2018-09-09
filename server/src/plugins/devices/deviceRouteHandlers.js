@@ -15,7 +15,7 @@ module.exports = () => {
             const ambValues = new AmbValuesM({ temp, air, hpa, hum });
             await ambValues.save();
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -31,7 +31,7 @@ module.exports = () => {
             await device.save();
 
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -53,7 +53,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -75,7 +75,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -98,7 +98,7 @@ module.exports = () => {
             }
 
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
@@ -114,7 +114,7 @@ module.exports = () => {
             let alarmFire = await Alarm.shouldAlarmFire();
             console.log("shouldAlarmFire", alarmFire);
         } catch (error) {
-            console.error(error.stack)
+            console.log(error.stack)
             return Boom.badRequest(error.message)
         }
         return { response: "ok." };
@@ -127,21 +127,20 @@ module.exports = () => {
             const dev = await Device.findOne({ deviceId: request.payload.id }).exec();
 
             if (dev) {
-                dev.lastCheckIn = new Date()
+                dev.lastCheckIn = new Date();
+                dev.localIp=request.payload.localIp;
                 await dev.save();
             } else {
                 throw new Error(`Device with id ${request.payload.id} does not exist!`)
             }
         } catch (error) {
-            console.error(error.stack);
+            console.log(error.stack);
             return Boom.badRequest(error.message)
         }
 
         return { response: "ok." };
 
     };
-
-
 
 
     return {

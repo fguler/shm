@@ -32,7 +32,7 @@ const register = async function (server, options) {
             }
 
         } catch (error) {
-            console.log(error.stack)
+            console.log(error)
         }
     };
 

@@ -22,7 +22,7 @@ const plugins = [
         options: {}
     },
     {
-        plugin: require("./src/plugins/mqtt/msgInjector"),
+        plugin: require("./src/plugins/mqtt/"),
         options: {}
     }
 ];
