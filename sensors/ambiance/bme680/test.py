@@ -10,8 +10,7 @@ import gc
 
 micropython.alloc_emergency_exception_buf(100)
 ONE_MINUTE_IN_MS = 60000
-SERVER_URL="http://192.168.1.101:7788"
-#SERVER_URL = "http://192.168.1.22:7788"
+
 
 sensorData={"temp":0,"hum":0,"gas":0,"hpa":0}
 

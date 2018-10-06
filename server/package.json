@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start":"node server.js",
     "dev": "nodemon server.js",
-    "pm": "pm2 start server.js --node-args=\"--harmony\" --name simple-home-m --log-date-format \"DD-MM-YYYY HH:mm Z\""
+    "pm2Dev": "pm2 start ecosystem.config.js",
+    "pm2Pro": "pm2 start ecosystem.config.js --env production",
+    "pm_old": "pm2 start server.js --node-args=\"--harmony\" --name simple-home-m --log-date-format \"DD-MM-YYYY HH:mm Z\""
   },
   "author": "fguler",
   "license": "ISC",

@@ -61,9 +61,10 @@ client.publish = (topic, message) => {
             clientRef.publish(topic, msg,(err)=>{
                 if(err){
                     console.log(err);
+                    throw err;
                 }
             });
-
+            
             resolve(true);
         } catch (error) {
             reject(error)
