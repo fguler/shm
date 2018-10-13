@@ -6,7 +6,7 @@ from i2c import I2CAdapter
 from machine import Pin
 from machine import Timer
 import gc
-from utils import WDT, CheckIn, MqttClient
+from utils import WDT,CheckIn,MqttClient
 
 ONE_MINUTE_IN_MS = 60000
 
@@ -15,9 +15,9 @@ sensor = bme680.BME680(i2c_device=i2c_dev, i2c_addr=bme680.I2C_ADDR_SECONDARY)
 sensor.set_gas_heater_profile(320, 150)
 
 
-# MQTT topics
-TOPIC_AMB = "{}{}".format(MQTT_APP_ID, "/devices/ambiance")
-TOPIC_GAS = "{}{}".format(MQTT_APP_ID, "/devices/gasAlert")
+#MQTT topics
+TOPIC_AMB="{}{}".format(MQTT_APP_ID,"/devices/ambiance")
+TOPIC_GAS="{}{}".format(MQTT_APP_ID,"/devices/gasAlert")
 
 
 def getDeltaMs(start=0):
@@ -57,23 +57,62 @@ print("Sensor stabilizing period has ended")
 class AirQuality:
     def __init__(self):
 
+        self.data = []  # will hold last the VOC readings
+        self.gasBaseline = 0  # avarage of first 30 readings in the array
         self.lastTimeDataSent = 0
-        # alarm should be triggered every 10 minutes
-        self.ALARM_INTERVAL = ONE_MINUTE_IN_MS*10
-        self.BASE_VOC_VALUE = 450000
+        self.DATA_ARRAY_SIZE = 60
+        self.ALARM_INTERVAL = ONE_MINUTE_IN_MS*10  # alarm should be triggered every 10 minutes
 
-    def calculateAirQuality(self, gas):
-        air_quality_score = 0
+    def calculateAirQuality(self, gas, hum):
+        #add last reading to the list to calculate gas baseline
+        self.addLastReading(gas)
 
-        if gas >= self.BASE_VOC_VALUE:
-            air_quality_score = 100
+        # if we don't have enough data to calculate baseline return 100
+        if len(self.data) != self.DATA_ARRAY_SIZE:
+            return 100
+
+        gas_baseline = self.gasBaseline
+
+        # Set the humidity baseline to 40%, an optimal indoor humidity.
+        hum_baseline = 40.0
+
+        # This sets the balance between humidity and gas reading in the
+        # calculation of air_quality_score (25:75, humidity:gas)
+        hum_weighting = 0.25
+
+        gas_offset = gas_baseline - gas
+        hum_offset = hum - hum_baseline
+
+        # Calculate hum_score as the distance from the hum_baseline.
+        if hum_offset > 0:
+            hum_score = (100 - hum_baseline - hum_offset) / (100 - hum_baseline) * (hum_weighting * 100)
+
         else:
-            air_quality_score = round((gas/self.BASE_VOC_VALUE)*100)
+            hum_score = (hum_baseline + hum_offset) / hum_baseline * (hum_weighting * 100)
+
+        # Calculate gas_score as the distance from the gas_baseline.
+        if gas_offset > 0:
+            gas_score = (gas / gas_baseline) * (100 - (hum_weighting * 100))
+
+        else:
+            gas_score = 100 - (hum_weighting * 100)
+
+        # Calculate air_quality_score.
+        air_quality_score = round(hum_score + gas_score)
 
         return air_quality_score
 
+    def addLastReading(self, gas):
+        if len(self.data) != self.DATA_ARRAY_SIZE:
+            self.data.insert(0, gas)
+            print("Data array size {}".format(len(self.data)))
+        else:
+            self.data.pop()  # delete last element
+            self.data.insert(0, gas)  # add new element to first position
+            self.gasBaseline = round(sum(self.data[-30:])/30)  # calculate baseline
+
     def send(self):
-        msg = {"status": True, "id": MQTT_CLIENT_ID}
+        msg = {"status": True,"id":MQTT_CLIENT_ID}
         mc.publish(TOPIC_GAS, msg)
 
     def measureTimePassed(self):
@@ -88,14 +127,14 @@ class AirQuality:
             self.lastTimeDataSent = time.ticks_ms()
 
 
+
 # Class to send Ambiance values to server
 class Ambiance:
-    def __init__(self, air):
-        self.air = air
+    def __init__(self,air):
+        self.air=air
         self.lastTime = 0
-        self.response_time = ONE_MINUTE_IN_MS*15
-        self.sensorData = {"temp": 0, "hum": 0, "gas": 0,
-                           "air": 0, "hpa": 0, "id": MQTT_CLIENT_ID}
+        self.response_time = ONE_MINUTE_IN_MS*30
+        self.sensorData = {"temp": 0, "hum": 0, "air": 0, "hpa": 0,"id":MQTT_CLIENT_ID}
 
     def measureTimePassed(self):
         delta = getDeltaMs(self.lastTime)
@@ -111,31 +150,31 @@ class Ambiance:
         self.sensorData["temp"] = sData["temp"]
         self.sensorData["hum"] = sData["hum"]
         self.sensorData["hpa"] = sData["hpa"]
-        self.sensorData["gas"] = sData["gas"]
 
-        air = self.air.calculateAirQuality(sData["gas"])
+        air = self.air.calculateAirQuality(sData["gas"], sData["hum"])
         self.sensorData["air"] = air
         print(self.sensorData)
 
-        # trigers alarm if air quality score drops below 60
-        if air < 65:
+        #trigers alarm if air quality score drops below 60
+        if air<65:
             self.air.trigerAlarm()
-
+        
         if self.measureTimePassed():
             self.send()
             self.lastTime = time.ticks_ms()
 
 
-wdt = WDT()
 
-# MQTT
-mc = MqttClient(MQTT_CLIENT_ID, PRIVATE_KEY, MQTT_BRK, 1200)
+wdt=WDT()
+
+#MQTT
+mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,MQTT_BRK,1200)
 mc.connect()
 print("connected to MQTT broker!")
 
 airObj = AirQuality()
 amb = Ambiance(airObj)
-chk = CheckIn(MQTT_APP_ID, MQTT_CLIENT_ID, mc)
+chk=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
 
 
 # Run loop
@@ -145,3 +184,4 @@ while True:
     wdt.feed()
     time.sleep(10)
 
+#450000

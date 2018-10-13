@@ -14,6 +14,7 @@ const register = async function (server, options) {
                 payload: {
                     temp: Joi.number().required(),
                     hum: Joi.number().required(),
+                    gas: Joi.number().required(),
                     air: Joi.number().required(),
                     hpa: Joi.number().required(),
                     id: Joi.string().required()

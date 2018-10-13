@@ -11,8 +11,8 @@ module.exports = () => {
     const saveAmbianceValues = async (request, h) => {
 
         try {
-            let { temp, air, hpa, hum } = request.payload
-            const ambValues = new AmbValuesM({ temp, air, hpa, hum });
+            let { temp, air, gas, hpa, hum } = request.payload
+            const ambValues = new AmbValuesM({ temp, air, gas, hpa, hum });
             await ambValues.save();
         } catch (error) {
             console.log(error.stack)
@@ -128,7 +128,7 @@ module.exports = () => {
 
             if (dev) {
                 dev.lastCheckIn = new Date();
-                dev.localIp=request.payload.localIp;
+                dev.localIp = request.payload.localIp;
                 await dev.save();
             } else {
                 throw new Error(`Device with id ${request.payload.id} does not exist!`)
