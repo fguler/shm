@@ -1,10 +1,12 @@
-process.env["NODE_CONFIG_DIR"] = "../../../../" + "/config/";
+const Path = require("path");
+require('dotenv').config({ path: Path.resolve("../../../../.env") });
 const Mongoose = require('mongoose');
-const Config = require('config');
 const AmbValuesM = require("../../../models/ambiance")
 const Utils = require("../../utils");
 const FS = require("fs");
 var CSV = require("fast-csv");
+
+//return console.log(process.env.MONGODB_MLAP_URL);
 
 // Use native promises
 Mongoose.Promise = global.Promise;
@@ -14,17 +16,16 @@ const getDataFromDb = (limit) => {
 
     return AmbValuesM.find().
         sort({ _id: -1 }).
-        limit(limit).exec()
-
+        limit(limit).exec();
 };
 
 // turn mongoose objects to plain js objects
 const normalizeObject = (doc) => {
-    let { id, temp, hum, air, hpa, createdAt } = doc;
+    let { id, temp, hum, air, hpa, gas, createdAt } = doc;
     let [date, time] = Utils.dateFromString(createdAt).split("-");
     time = time.trim();
     date = date.trim();
-    return { id, temp, hum, air, hpa, date, time }
+    return { id, temp, hum, air, gas, hpa, date, time };
 };
 
 //write data to csv file
@@ -53,7 +54,7 @@ const jsonToCsv = (data) => {
 const main = async () => {
 
     //connect to mongoDB
-    await Mongoose.connect(Config.get('mongoDB.url'))
+    await Mongoose.connect(process.env.MONGODB_MLAP_URL)
         .then(() => console.log("MongoDB Connected..."));
 
     let data = await getDataFromDb(50);

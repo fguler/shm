@@ -54,7 +54,7 @@ module.exports = (chartData) => {
                         labelString: 'Score (%)'
                     },
                     ticks: {
-                        min: calculateMinTick(chartData.air.data),
+                        min: calculateMinTick([...chartData.air.data]),
                         max: 100,
                         stepSize: 2
                     }

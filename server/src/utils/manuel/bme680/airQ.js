@@ -1,8 +1,18 @@
-const ChartConfig = require("./chartConfigs/airQuality_c");
-const puppeteer = require('puppeteer');
-const Utils = require("../utils/utils");
-const AmbianceModel = require("../models/ambiance");
+const Path = require("path");
+require('dotenv').config({ path: Path.resolve("../../../../.env") });
+const Mongoose = require('mongoose');
+const AmbianceModel = require("../../../models/ambiance")
+const Utils = require("../../utils");
+const FS = require("fs");
+var CSV = require("fast-csv");
 const Moment = require("moment");
+
+//return console.log(process.env.MONGODB_MLAP_URL);
+
+// Use native promises
+Mongoose.Promise = global.Promise;
+
+
 
 const timeRangeOptions = {
     HOURLY: "hourly", // last 12 hours
@@ -69,7 +79,7 @@ const prepareChartData = (timeRange, records) => {
     };
 
     const mapAir = new Map();
- 
+
     switch (timeRange) {
 
         case timeRangeOptions.HOURLY:
@@ -91,8 +101,8 @@ const prepareChartData = (timeRange, records) => {
         // decide label category
         if (timeRange == timeRangeOptions.HOURLY) {
             label = new Date(createdAt).getHours("tr-TR", { hour12: false }); // label is hour
-        }else if(timeRange == timeRangeOptions.WEEKLY){
-            label=Moment(createdAt).isoWeek(); // label is week
+        } else if (timeRange == timeRangeOptions.WEEKLY) {
+            label = Moment(createdAt).isoWeek(); // label is week
         }
 
         // add values to maps
@@ -115,57 +125,46 @@ const prepareChartData = (timeRange, records) => {
 
 };
 
-const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
+const jsonToCsv = (data) => {
 
-    //const browser = await puppeteer.launch({ headless: true });
+    return new Promise((resolve, reject) => {
+        const ws = FS.createWriteStream("./air.csv");
 
-    // executablePath is necessary on raspberry pi
-    const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
-    const page = await browser.newPage();
+        try {
+            // pipe returns the destination stream
+            CSV.write(data, { headers: true }).pipe(ws).on("finish", () => {
+                console.log("The CSV file has been crated.");
+                resolve(true);
+            });
 
-    await page.goto(htmlFilePath);
-
-    let config = ChartConfig(chartData);
-
-    // pass chart config to the page
-    await page.evaluate((args) => {
-        drawChart(args);
-    }, { config });
-
-    await Utils.sleep(1000);
-    const outputPath = tmpPath + 'airQuality.png';
-
-    await page.screenshot({ path: outputPath });
-
-    await browser.close();
-
-    return outputPath;
-
-};
-
-module.exports = ({ htmlFilePath, tmpPath }) => {
-    // Air Quality chart of last 12 hours
-    const hourlyAirQuality = async () => {
-
-        let records = await getRecordsfromDB(timeRangeOptions.HOURLY);
-        const chartData = prepareChartData(timeRangeOptions.HOURLY, records);
-        chartData.chartName = "Last 12 Hours Air Quality";
-
-        const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
-
-        return chartPath
-
-    };
-
-    return {
-        getAirQualityChart(){
-            return {
-                timeRangeOptions,
-                hourlyAirQuality      
-            };
-
+        } catch (err) {
+            reject(err)
         }
-    };
+
+    });
 
 };
+
+const main = async () => {
+
+    //connect to mongoDB
+    await Mongoose.connect(process.env.MONGODB_MLAP_URL)
+        .then(() => console.log("MongoDB Connected..."));
+
+    console.log("kkk");
+    let records = await getRecordsfromDB(timeRangeOptions.HOURLY);
+    const chartData = prepareChartData(timeRangeOptions.HOURLY, records);
+
+
+    await jsonToCsv([chartData.air]);
+};
+
+main().then(() => {
+    console.log("Finished...")
+    process.exit(0);
+}).catch((err) => {
+    console.log(err);
+    process.exit(1);
+});
+
