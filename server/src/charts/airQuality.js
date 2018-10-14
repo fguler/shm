@@ -21,7 +21,7 @@ const labelsAndDataFromMap = (map) => {
 
         let sum = valArray.reduce((sum, val) => sum + val, 0); // sum up all values inside the array
 
-        labelsAndData.data.push(parseInt(sum / valArray.length)); // calculate avarage value for the label
+        labelsAndData.data.push(Math.round(sum / valArray.length)); // calculate avarage value for the label
     });
 
 

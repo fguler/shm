@@ -118,7 +118,7 @@ class Ambiance:
         print(self.sensorData)
 
         # trigers alarm if air quality score drops below 60
-        if air < 65:
+        if air < 60:
             self.air.trigerAlarm()
 
         if self.measureTimePassed():
