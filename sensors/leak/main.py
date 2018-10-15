@@ -1,38 +1,66 @@
 import time
-import micropython
-import urequests
 import ujson
 import machine
-from machine import Pin, Timer
+from machine import Pin
+from utils import WDT,CheckIn,MqttClient
 import gc
 micropython.alloc_emergency_exception_buf(100)
 
 ONE_MINUTE_IN_MS = 60000
 
-SERVER_URL = "http://192.168.1.101:7788"
-# SERVER_URL="http://192.168.1.25:7788"
+wdt=WDT()
 
 
-def getDeltaMs(start=0):
-    delta = time.ticks_diff(time.ticks_ms(), start)
-    return delta
-
-# sends sensor data to server
-def sendToServer(path, data):
-    headers = {'Content-Type': 'application/json'}
-    url = SERVER_URL+path
-
-    try:
-        jdata = ujson.dumps(data)
-        response = urequests.post(url, data=jdata, headers=headers)
-        return response
-    except Exception:
-        print("Error occured while sending data to server")
-
-    gc.collect()
+TOPIC_LEAK="{}{}".format(MQTT_APP_ID,"/devices/leakAlert")
 
 
 # class for leak alert
+class Leak:
+    def __init__(self):
+        self.pin = Pin(5, Pin.IN)  # D01 on the boart
+        self.lastAlertTime = 0
+        self.interval = ONE_MINUTE_IN_MS*15
+
+    def raiseAlert(self):
+        #path = "/api/devices/leakAlert"
+        msg = {"status": True, "id": MQTT_CLIENT_ID}
+        mc.publish(TOPIC_LEAK, msg)
+
+    def readSensorState(self):
+        count = 0
+        i = 0
+        pValue = 0
+
+        while i < 3:
+            pValue = self.pin.value()
+            count += pValue
+            time.sleep_ms(500)
+            i += 1
+        return count
+
+    def check(self, _):
+
+        state = self.readSensorState()
+        cTime = time.ticks_ms()
+        isItTime = (cTime>=self.lastAlertTime)
+
+        if state < 3 and isItTime:
+            print("leak alert")
+            self.lastAlertTime = (cTime+self.interval)
+            self.raiseAlert()
+
+mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,MQTT_BRK,1200)
+mc.setCallback(onMessage)
+mc.connect()
+print("connected to MQTT broker!")
+mc.subscribe(TOPIC_LAMP)
+mc.subscribe(TOPIC_ALARM)
+
+while True:
+    
+
+
+""" # class for leak alert
 class Leak:
     def __init__(self):
         self.leakActionRef = self.leakAction
@@ -79,7 +107,7 @@ class Leak:
 
 leak = Leak()
 leak.start()
-
+ """
 
 """ #read sensor status and inform server
 def readSensorState():

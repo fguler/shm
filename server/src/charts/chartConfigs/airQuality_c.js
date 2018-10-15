@@ -2,13 +2,16 @@
 
 const calculateMinTick = (data) => {
 
-    let sNum = data.sort()[0];
+    let sorted=data.sort((a,b) => a-b);
+
+    let sNum = sorted[0];
     let minValue = (sNum - 10);
 
     if (minValue <= 0) {
         minValue = sNum;
     }
     minValue = minValue % 2 == 0 ? minValue : minValue - 1;
+    console.log(minValue);
     return minValue;
 };
 
