@@ -1,5 +1,6 @@
 const ChartConfig = require("./chartConfigs/tempAndHum_c");
-const puppeteer = require('puppeteer');
+//const puppeteer = require('puppeteer');
+const Pupp=require("./puppeteer");
 const Utils = require("../utils/utils");
 const AmbianceModel = require("../models/ambiance");
 const Moment = require("moment");
@@ -136,7 +137,7 @@ const getRecordsfromDB = async (timeRange) => {
 
 };
 
-const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
+/* const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
     //const browser = await puppeteer.launch({ headless: true });
 
@@ -162,7 +163,7 @@ const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
     return outputPath;
 
-};
+}; */
 
 
 module.exports = ({ htmlFilePath, tmpPath }) => {
@@ -175,7 +176,11 @@ module.exports = ({ htmlFilePath, tmpPath }) => {
         const chartData = prepareChartData(timeRangeOptions.HOURLY, records);
         chartData.chartName = "Last 12 Hours Temperature and Humidity";
 
-        const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
+        const config = ChartConfig(chartData);
+        const outputPath = tmpPath + 'tempAndHum.png'
+
+        //const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
+        const chartPath=Pupp.createChart({config,htmlFilePath,outputPath})
 
         return chartPath;
 
@@ -189,7 +194,11 @@ module.exports = ({ htmlFilePath, tmpPath }) => {
         const chartData = prepareChartData(timeRangeOptions.WEEKLY, records);
         chartData.chartName = "Last 4 Weeks Temperature and Humidity";
 
-        const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
+        const config = ChartConfig(chartData);
+        const outputPath = tmpPath + 'tempAndHum.png'
+
+        //const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
+        const chartPath=Pupp.createChart({config,htmlFilePath,outputPath})
 
         return chartPath;
 

@@ -1,6 +1,7 @@
 const ChartConfig = require("./chartConfigs/airQuality_c");
-const puppeteer = require('puppeteer');
-const Utils = require("../utils/utils");
+//const puppeteer = require('puppeteer');
+const Pupp=require("./puppeteer");
+//const Utils = require("../utils/utils");
 const AmbianceModel = require("../models/ambiance");
 const Moment = require("moment");
 
@@ -115,13 +116,18 @@ const prepareChartData = (timeRange, records) => {
 
 };
 
-const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
+/* const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
+    const browser="";
+    const environment = process.env.NODE_ENV;
 
-    //const browser = await puppeteer.launch({ headless: true });
+    if(environment=="development"){
+        browser = await puppeteer.launch({ headless: true });
+    }else{
+        // executablePath is necessary on raspberry pi
+        browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
+    }
 
-    // executablePath is necessary on raspberry pi
-    const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
     const page = await browser.newPage();
 
     await page.goto(htmlFilePath);
@@ -142,7 +148,7 @@ const createChart = async ({chartData,htmlFilePath,tmpPath}) => {
 
     return outputPath;
 
-};
+}; */
 
 module.exports = ({ htmlFilePath, tmpPath }) => {
     // Air Quality chart of last 12 hours
@@ -152,7 +158,13 @@ module.exports = ({ htmlFilePath, tmpPath }) => {
         const chartData = prepareChartData(timeRangeOptions.HOURLY, records);
         chartData.chartName = "Last 12 Hours Air Quality";
 
-        const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
+        const config = ChartConfig(chartData);
+        const outputPath = tmpPath + 'airQuality.png';
+
+        const chartPath=Pupp.createChart({config,htmlFilePath,outputPath})
+
+
+        //const chartPath = await createChart({chartData,htmlFilePath,tmpPath});
 
         return chartPath
 
