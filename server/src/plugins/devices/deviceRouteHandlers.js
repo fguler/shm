@@ -19,7 +19,10 @@ module.exports = () => {
             return Boom.badRequest(error.message)
         }
 
-        return { response: "ok." };
+        const response = h.response({response:"created"}).code(201).type('application/json');
+        // response.header('X-Custom-F', 'some-value');
+
+        return response;
 
     };
 
@@ -42,6 +45,7 @@ module.exports = () => {
 
     // triggred when there is a leak alert at home
     const leakAlert = async (request, h) => {
+        console.log("Door alert was send!");
         let msg = "Leak alert has been trigered, check the house!";
 
         try {
@@ -63,6 +67,7 @@ module.exports = () => {
 
 
     const doorAlert = async (request, h) => {
+        console.log("Door alert was send!");
 
         let msg = "Attention! Balcony door has been opened!";
 
@@ -86,6 +91,7 @@ module.exports = () => {
 
 
     const gasAlert = async (request, h) => {
+        console.log("Gas alert was send!");
         let msg = "Attention! Air quality has dropped significantly, check the house!";
 
         try {
@@ -124,14 +130,14 @@ module.exports = () => {
     const deviceCheckIn = async (request, h) => {
 
         try {
-            const dev = await Device.findOne({ deviceId: request.payload.id }).exec();
+            const dev = await Device.findOne({ deviceId: request.payload.deviceId }).exec();
 
             if (dev) {
                 dev.lastCheckIn = new Date();
                 dev.localIp = request.payload.localIp;
                 await dev.save();
             } else {
-                throw new Error(`Device with id ${request.payload.id} does not exist!`)
+                throw new Error(`Device with id ${request.payload.deviceId} does not exist!`)
             }
         } catch (error) {
             console.log(error.stack);

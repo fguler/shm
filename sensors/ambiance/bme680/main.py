@@ -73,7 +73,7 @@ class AirQuality:
         return air_quality_score
 
     def send(self):
-        msg = {"status": True, "id": MQTT_CLIENT_ID}
+        msg = {"status": True, "deviceId": MQTT_CLIENT_ID}
         mc.publish(TOPIC_GAS, msg)
 
     def measureTimePassed(self):
@@ -95,7 +95,7 @@ class Ambiance:
         self.lastTime = 0
         self.response_time = ONE_MINUTE_IN_MS*15
         self.sensorData = {"temp": 0, "hum": 0, "gas": 0,
-                           "air": 0, "hpa": 0, "id": MQTT_CLIENT_ID}
+                           "air": 0, "hpa": 0, "deviceId": MQTT_CLIENT_ID}
 
     def measureTimePassed(self):
         delta = getDeltaMs(self.lastTime)

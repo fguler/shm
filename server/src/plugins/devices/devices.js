@@ -1,10 +1,15 @@
 const Joi = require('joi');
-const Handlers = require("./deviceRouteHandlers");
+const RoutesV1=require("./routesV1");
 
-const handlers = Handlers();
+//const Handlers = require("./deviceRouteHandlers");
+
+
+//const handlers = Handlers();
 
 const register = async function (server, options) {
 
+    server.route(RoutesV1);
+/* 
     server.route({
         method: "POST",
         path: "/api/devices/ambiance",
@@ -79,7 +84,7 @@ const register = async function (server, options) {
                 }
             }
         }
-    });
+    }); */
 
     /*     server.route({
             method:"POST",
