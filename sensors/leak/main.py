@@ -1,18 +1,10 @@
 import time
-import ujson
-import machine
 from machine import Pin
 from utils import WDT,CheckIn,MqttClient
-import gc
-micropython.alloc_emergency_exception_buf(100)
 
 ONE_MINUTE_IN_MS = 60000
 
-wdt=WDT()
-
-
 TOPIC_LEAK="{}{}".format(MQTT_APP_ID,"/devices/leakAlert")
-
 
 # class for leak alert
 class Leak:
@@ -23,7 +15,7 @@ class Leak:
 
     def raiseAlert(self):
         #path = "/api/devices/leakAlert"
-        msg = {"status": True, "id": MQTT_CLIENT_ID}
+        msg = {"status": True, "deviceId": MQTT_CLIENT_ID}
         mc.publish(TOPIC_LEAK, msg)
 
     def readSensorState(self):
@@ -34,7 +26,7 @@ class Leak:
         while i < 3:
             pValue = self.pin.value()
             count += pValue
-            time.sleep_ms(500)
+            time.sleep_ms(300)
             i += 1
         return count
 
@@ -50,14 +42,19 @@ class Leak:
             self.raiseAlert()
 
 mc=MqttClient(MQTT_CLIENT_ID,PRIVATE_KEY,MQTT_BRK,1200)
-mc.setCallback(onMessage)
 mc.connect()
 print("connected to MQTT broker!")
-mc.subscribe(TOPIC_LAMP)
-mc.subscribe(TOPIC_ALARM)
+#mc.subscribe(TOPIC)
 
-while True:
-    
+#wdt=WDT()
+leak=Leak()
+#check=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
+
+""" while True:
+    check.pool()
+    wdt.feed()
+    time.sleep(2) """
+
 
 
 """ # class for leak alert

@@ -57,7 +57,7 @@ const main = async () => {
     await Mongoose.connect(process.env.MONGODB_MLAP_URL)
         .then(() => console.log("MongoDB Connected..."));
 
-    let data = await getDataFromDb(50);
+    let data = await getDataFromDb(100);
     data = data.map((doc) => normalizeObject(doc));
 
     await jsonToCsv(data);

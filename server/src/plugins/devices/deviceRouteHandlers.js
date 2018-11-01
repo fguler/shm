@@ -21,7 +21,6 @@ module.exports = () => {
 
         const response = h.response({response:"created"}).code(201).type('application/json');
         // response.header('X-Custom-F', 'some-value');
-
         return response;
 
     };
@@ -45,7 +44,7 @@ module.exports = () => {
 
     // triggred when there is a leak alert at home
     const leakAlert = async (request, h) => {
-        console.log("Door alert was send!");
+        console.log("Leak alert was received!");
         let msg = "Leak alert has been trigered, check the house!";
 
         try {
@@ -67,7 +66,7 @@ module.exports = () => {
 
 
     const doorAlert = async (request, h) => {
-        console.log("Door alert was send!");
+        console.log("Door alert was received!");
 
         let msg = "Attention! Balcony door has been opened!";
 
@@ -91,7 +90,7 @@ module.exports = () => {
 
 
     const gasAlert = async (request, h) => {
-        console.log("Gas alert was send!");
+        console.log("Gas alert was received!");
         let msg = "Attention! Air quality has dropped significantly, check the house!";
 
         try {

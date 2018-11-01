@@ -60,7 +60,7 @@ class AirQuality:
         self.lastTimeDataSent = 0
         # alarm should be triggered every 10 minutes
         self.ALARM_INTERVAL = ONE_MINUTE_IN_MS*10
-        self.BASE_VOC_VALUE = 460000
+        self.BASE_VOC_VALUE = 680000
 
     def calculateAirQuality(self, gas):
         air_quality_score = 0
