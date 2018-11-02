@@ -5,7 +5,7 @@ const Topics = require("./topicList");
 
 let clientRef;
 let callback;
-const internals = {};
+const self = {};
 const client = { connected: false };
 const aes = AES.createAES128Cipher(process.env.PRIVATE_KEY);
 
@@ -75,7 +75,7 @@ client.publish = (topic, message) => {
 };
 
 
-internals.connect = ({ clientId, keepalive = 1200 }) => {
+self.connect = ({ clientId, keepalive = 1200 }) => {
 
     return new Promise((resolve, reject) => {
 
@@ -108,13 +108,13 @@ internals.connect = ({ clientId, keepalive = 1200 }) => {
     });
 };
 
-internals.getClient = () => {
+self.getClient = () => {
     return client;
 };
 
-internals.topics = Topics.getMqttTopicNames();
+self.topics = Topics.getMqttTopicNames();
 
 
 
 
-module.exports = internals
+module.exports = self

@@ -46,14 +46,14 @@ mc.connect()
 print("connected to MQTT broker!")
 #mc.subscribe(TOPIC)
 
-#wdt=WDT()
+wdt=WDT()
 leak=Leak()
-#check=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
+check=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
 
-""" while True:
+while True:
     check.pool()
     wdt.feed()
-    time.sleep(2) """
+    time.sleep(3)
 
 
 
