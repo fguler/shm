@@ -24,6 +24,10 @@ const plugins = [
     {
         plugin: require("./src/plugins/mqtt/"),
         options: {}
+    },
+    {
+        plugin: require("./src/plugins/mqttMessageAuth"),
+        options: {}
     }
 ];
 

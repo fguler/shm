@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const MQTT = require("../../mqtt");
-const Device = require("../../models/device");
+//const Device = require("../../models/device");
 
 // this plugin connects to MQTT broker, subscribes the topics and 
 // injects incoming messages into server
@@ -16,13 +16,13 @@ const register = async function (server, options) {
         };
 
         try {
-            if (!message.deviceId) { // every message must have a device id
+/*             if (!message.deviceId) { // every message must have a device id
                 throw new Error("The message does not have a device Id!");
             }
             const dev = await Device.findOne({ deviceId: message.deviceId }).exec();
             if (!dev) {
                 throw new Error("The device Id in the message is unknown!");
-            }
+            } */
             //trigger v1 routes
             if (topic.includes("/")) {
                 let url = "/api/v1" + topic.slice(topic.indexOf("/"));

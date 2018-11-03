@@ -20,6 +20,9 @@ routes.push({
                 hpa: Joi.number().required(),
                 deviceId: Joi.string().required()
             }
+        },
+        plugins:{
+            "mqttMessageAuth":{prop:"deviceId"}
         }
     }
 });
@@ -49,7 +52,10 @@ routes.push({
             payload: {
                 status: Joi.bool().required(),
                 deviceId: Joi.string().required()
-            }
+            },
+        },
+        plugins:{
+            "mqttMessageAuth":{prop:"deviceId"}
         }
     }
 });
@@ -57,14 +63,21 @@ routes.push({
 routes.push({
     method: "POST",
     path: "/api/v1/devices/leakAlert",
-    handler: handlers.leakAlert
+    handler: handlers.leakAlert,
+    options: {
+        validate: {
+            payload: {
+                status: Joi.bool().required(),
+                deviceId: Joi.string().required()
+            },
+        },
+        plugins:{
+            "mqttMessageAuth":{prop:"deviceId"}
+        }
+    }
 });
 
-routes.push({
-    method: "POST",
-    path: "/api/v1/devices/doorAlert",
-    handler: handlers.doorAlert
-});
+
 
 routes.push({
     method: "POST",
@@ -76,9 +89,41 @@ routes.push({
                 deviceId: Joi.string().required(),
                 localIp: Joi.string().required()
             }
+        },
+        plugins:{
+            "mqttMessageAuth":{prop:"deviceId"}
         }
     }
 });
+
+routes.push({
+    method: "POST",
+    path: "/api/v1/devices/test",
+    handler: async (request, h)=>{
+
+        console.log(request.payload);
+
+        return {status:"ok"};
+    },
+    options: {
+        validate: {
+            payload: {
+                deviceId: Joi.string().required(),
+                status: Joi.string(),
+            }
+        },
+        plugins:{
+            "mqttMessageAuth":{prop:"deviceId"}
+        }
+    }
+});
+
+
+/* routes.push({
+    method: "POST",
+    path: "/api/v1/devices/doorAlert",
+    handler: handlers.doorAlert
+}); */
 
 /*     routes.push({
         method:"POST",
