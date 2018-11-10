@@ -6,6 +6,7 @@ from i2c import I2CAdapter
 from machine import Pin
 from machine import Timer
 import gc
+import math
 from utils import WDT, CheckIn, MqttClient
 
 ONE_MINUTE_IN_MS = 60000
@@ -60,7 +61,7 @@ class AirQuality:
         self.lastTimeDataSent = 0
         # alarm should be triggered every 10 minutes
         self.ALARM_INTERVAL = ONE_MINUTE_IN_MS*10
-        self.BASE_VOC_VALUE = 680000
+        self.BASE_VOC_VALUE = 750000
 
     def calculateAirQuality(self, gas):
         air_quality_score = 0
@@ -68,7 +69,7 @@ class AirQuality:
         if gas >= self.BASE_VOC_VALUE:
             air_quality_score = 99
         else:
-            air_quality_score = round((gas/self.BASE_VOC_VALUE)*100)
+            air_quality_score = math.floor((gas/self.BASE_VOC_VALUE)*100)
 
         return air_quality_score
 
@@ -118,7 +119,7 @@ class Ambiance:
         print(self.sensorData)
 
         # trigers alarm if air quality score drops below 60
-        if air < 60:
+        if air < 50:
             self.air.trigerAlarm()
 
         if self.measureTimePassed():
