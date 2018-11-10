@@ -3,6 +3,7 @@ const Ambiance=require("./ambiance");
 const Report=require("./report");
 const Chart=require("./chart");
 const Devices=require("./devices");
+const Parameters=require("./parameters");
 
 
 const actions=Object.assign({},
@@ -10,7 +11,8 @@ const actions=Object.assign({},
     Ambiance(),
     Report(),
     Chart(),
-    Devices()
+    Devices(),
+    Parameters()
 );
 
 module.exports=actions;
