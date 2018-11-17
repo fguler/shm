@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node server.js",
     "dev": "NODE_ENV=development nodemon server.js",
     "pm2Pro": "pm2 start ecosystem.config.js --env production",
     "pm_old": "pm2 start server.js --node-args=\"--harmony\" --name simple-home-m --log-date-format \"DD-MM-YYYY HH:mm Z\""
@@ -13,17 +13,17 @@
   "author": "fguler",
   "license": "ISC",
   "dependencies": {
-    "boom": "^7.2.0",
-    "dialogflow": "^0.6.0",
-    "dotenv": "^6.0.0",
+    "boom": "^7.2.2",
+    "dialogflow": "^0.7.0",
+    "dotenv": "^6.1.0",
     "fast-csv": "^2.4.1",
-    "hapi": "^17.5.4",
-    "joi": "^13.6.0",
+    "hapi": "^17.7.0",
+    "joi": "^14.0.4",
     "moment": "^2.22.2",
-    "mongoose": "^5.2.12",
+    "mongoose": "^5.3.11",
     "mqtt": "^2.18.8",
     "ping": "^0.2.2",
-    "puppeteer": "^1.7.0",
-    "telegraf": "^3.23.0"
+    "puppeteer": "^1.10.0",
+    "telegraf": "^3.25.0"
   }
 }
