@@ -16,6 +16,7 @@ module.exports=()=>{
         let endTime=result.parameters.fields.endTime.numberValue;
 
         const param=await Parameter.findOne({}).exec();
+        
         param.nightModeTimeRange.start=startTime;
         param.nightModeTimeRange.end=endTime;
 
