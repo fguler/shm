@@ -18,11 +18,11 @@ const server = Hapi.server({
 const plugins = [
 
     {
-        plugin: require("./src/plugins/devices/devices"),
+        plugin: require("./src/plugins/devices"),
         options: {}
     },
     {
-        plugin: require("./src/plugins/mqtt/"),
+        plugin: require("./src/plugins/mqttClient/"),
         options: {}
     },
     {
@@ -33,6 +33,16 @@ const plugins = [
 
 
 const start = async () => {
+
+    //connect to mongoDB
+    Mongoose.Promise = global.Promise; // Use native promises
+    const mongoOptions = {
+        reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+        reconnectInterval: 2000, // Reconnect every 2000ms
+    };
+    await Mongoose.connect(process.env.MONGODB_ATLAS_URL, mongoOptions);
+    console.log("MongoDB Connected...")
+
 
     await server.register(plugins);
 
@@ -51,19 +61,8 @@ const start = async () => {
     // start server
     await server.start();
 
-    //connect to mongoDB
-    Mongoose.Promise = global.Promise; // Use native promises
-
-    const mongoOptions = {
-        reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-        reconnectInterval: 2000, // Reconnect every 2000ms
-    };
-    await Mongoose.connect(process.env.MONGODB_MLAP_URL, mongoOptions);
-    console.log("MongoDB Connected...")
-
     // start telegram bot
     Bot.start();
-
 
     // start repetitive tasks
     BackTasks.run();
@@ -93,5 +92,10 @@ const gracefulShutdown = async (signal, code) => {
     }
 
 };
+
+process.on('unhandledRejection', (err) => {
+    console.log(err);
+    gracefulShutdown();
+})
 
 process.on('SIGINT', gracefulShutdown);

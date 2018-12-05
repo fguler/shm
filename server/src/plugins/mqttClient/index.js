@@ -46,15 +46,7 @@ const register = async function (server, options) {
         await client.subscribe(subTopics[t])
     }
 
-
     //await client.subscribe(MQTT.topics.DEVICES_CHECK_IN);
-    //await client.subscribe(MQTT.topics.DEVICES_AMBIANCE_VALUES);
-    //await client.subscribe(MQTT.topics.DEVICES_GAS_ALERT);
-
-
-    //let msg = { status: false }
-    //await client.publish(`${process.env.MQTT_APP_ID}/devices/LRoomLamp`, msg);
-
 
 };
 
