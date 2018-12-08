@@ -37,7 +37,8 @@ routes.push({
             payload: {
                 deviceId: Joi.string().required(),
                 definition: Joi.string().required(),
-                comment: Joi.string()
+                shortName: Joi.string().required(),
+                type:Joi.string()
             }
         }
     }

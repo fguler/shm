@@ -1,8 +1,9 @@
 const Boom = require('boom');
 const Bot = require("../../bot/bot");
 const Alarm = require("../../raspi/alarm/alarm");
-const AmbValuesM = require("../../models/ambiance");
+const Ambiance = require("../../models/ambiance");
 const Device = require("../../models/device");
+const Moment = require("moment");
 
 
 module.exports = () => {
@@ -11,15 +12,16 @@ module.exports = () => {
     const saveAmbianceValues = async (request, h) => {
 
         try {
-            let { temp, air, gas, hpa, hum } = request.payload
-            const ambValues = new AmbValuesM({ temp, air, gas, hpa, hum });
+            let { temp, gas, air, hpa, hum } = request.payload
+
+            const ambValues = new Ambiance({ temp, air, gas, hpa, hum });
             await ambValues.save();
         } catch (error) {
             console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
-        const response = h.response({response:"created"}).code(201).type('application/json');
+        const response = h.response({ response: "created" }).code(201).type('application/json');
         // response.header('X-Custom-F', 'some-value');
         return response;
 
@@ -27,6 +29,7 @@ module.exports = () => {
 
     //register new IoT device
     const registerNewDevice = async (request, h) => {
+        //TODO : check if device IP already exists
 
         try {
             const device = new Device({ ...request.payload });
