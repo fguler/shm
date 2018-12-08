@@ -3,7 +3,6 @@ const Bot = require("../../bot/bot");
 const Alarm = require("../../raspi/alarm/alarm");
 const Ambiance = require("../../models/ambiance");
 const Device = require("../../models/device");
-const Moment = require("moment");
 
 
 module.exports = () => {
