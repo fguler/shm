@@ -70,8 +70,5 @@ db/
 #Temporary docs
 tmp/
 
-<<<<<<< HEAD
 package-lock.json
-=======
 localTests.js
->>>>>>> release
