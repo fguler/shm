@@ -69,3 +69,5 @@ db/
 
 #Temporary docs
 tmp/
+
+localTests.js
