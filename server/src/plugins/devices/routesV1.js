@@ -16,7 +16,6 @@ routes.push({
                 temp: Joi.number().required(),
                 hum: Joi.number().required(),
                 gas: Joi.number().required(),
-                air: Joi.number().required(),
                 hpa: Joi.number().required(),
                 deviceId: Joi.string().required()
             }

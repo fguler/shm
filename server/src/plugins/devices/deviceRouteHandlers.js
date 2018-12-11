@@ -11,16 +11,21 @@ module.exports = () => {
     const saveAmbianceValues = async (request, h) => {
 
         try {
-            let { temp, gas, air, hpa, hum } = request.payload
+            let { temp, gas, hpa, hum } = request.payload
 
-            const ambValues = new Ambiance({ temp, air, gas, hpa, hum });
-            await ambValues.save();
+            const ambValues = new Ambiance({ temp, gas, hpa, hum });
+            await ambValues.calculateAirQuality();
+
+            if(ambValues.isItTimeToSave()){
+                await ambValues.save();
+            }
+
         } catch (error) {
             console.log(error.stack)
             return Boom.badRequest(error.message)
         }
 
-        const response = h.response({ response: "created" }).code(201).type('application/json');
+        const response = h.response({ response: "success" }).code(201).type('application/json');
         // response.header('X-Custom-F', 'some-value');
         return response;
 
