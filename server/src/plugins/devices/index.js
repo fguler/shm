@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const TwinManager=require("../../twinManager"); // just init it
 const RoutesV1=require("./routesV1");
 
 //const Handlers = require("./deviceRouteHandlers");

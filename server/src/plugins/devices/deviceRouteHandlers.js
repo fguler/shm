@@ -3,6 +3,7 @@ const Bot = require("../../bot/bot");
 const Alarm = require("../../raspi/alarm/alarm");
 const Ambiance = require("../../models/ambiance");
 const Device = require("../../models/device");
+const TwinManager=require("../../twinManager").getManager();
 
 
 module.exports = () => {
@@ -19,6 +20,8 @@ module.exports = () => {
             if(ambValues.isItTimeToSave()){
                 await ambValues.save();
             }
+
+            TwinManager.updateFeaturesOfTwin("envSensor",ambValues.toObject());
 
         } catch (error) {
             console.log(error.stack)
@@ -96,7 +99,7 @@ module.exports = () => {
 
 
 
-    const gasAlert = async (request, h) => {
+/*     const gasAlert = async (request, h) => {
         console.log("Gas alert was received!");
         let msg = "Attention! Air quality has dropped significantly, check the house!";
 
@@ -118,7 +121,7 @@ module.exports = () => {
         return { response: "ok." };
 
     };
-
+ */
 
     const alarmTest = async (request, h) => {
 
@@ -159,7 +162,6 @@ module.exports = () => {
         saveAmbianceValues,
         leakAlert,
         doorAlert,
-        gasAlert,
         registerNewDevice,
         deviceCheckIn,
         alarmTest

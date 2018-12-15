@@ -8,14 +8,11 @@ const sAlarmfire = require("./shouldAlarmFire");
 
 
 
-
 const alarm = () => {
 
     const state = {
         active: false
     };
-
-
 
 
     const fire = async () => {
@@ -32,7 +29,7 @@ const alarm = () => {
         await sleep(1000);
         await promisedExec("echo on 0 | cec-client -s -d 1");
 
-        await sleep(10000);
+        await sleep(6000);
 
         let path = Path.join(process.env.HOME, "Music", "alarm.mp3");
 

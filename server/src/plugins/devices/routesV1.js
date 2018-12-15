@@ -43,7 +43,7 @@ routes.push({
     }
 });
 
-routes.push({
+/* routes.push({
     method: "POST",
     path: "/api/v1/devices/gasAlert",
     handler: handlers.gasAlert,
@@ -58,7 +58,7 @@ routes.push({
             "mqttMessageAuth":{prop:"deviceId"}
         }
     }
-});
+}); */
 
 routes.push({
     method: "POST",
