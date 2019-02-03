@@ -53,7 +53,7 @@ check=CheckIn(MQTT_APP_ID,MQTT_CLIENT_ID,mc)
 while True:
     check.pool()
     wdt.feed()
-    time.sleep(3)
+    time.sleep(5)
 
 
 

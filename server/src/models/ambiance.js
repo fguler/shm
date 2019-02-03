@@ -41,7 +41,7 @@ ambianceSchema.methods.calculateAirQuality = async function () {
         if (qry.length > 0) {
             avgGasVal = Math.round(qry[0].avg);
         } else {
-            throw new Error("No previous gas data");
+            this.air = 99; // if there is no previous gas data
         }
 
         if (this.gas >= avgGasVal) {
@@ -52,10 +52,8 @@ ambianceSchema.methods.calculateAirQuality = async function () {
             this.air = airVal;
         }
 
-
     } catch (error) {
         console.log(error)
-        this.air = 0;
     }
 
 };

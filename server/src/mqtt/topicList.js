@@ -4,7 +4,7 @@ const subscribing={
     DEVICES_CHECK_IN:`${process.env.MQTT_APP_ID}/devices/checkIn`,
     DEVICES_AMBIANCE_VALUES:`${process.env.MQTT_APP_ID}/devices/ambiance`,
     //DEVICES_GAS_ALERT:`${process.env.MQTT_APP_ID}/devices/gasAlert`,
-    DEVICES_GAS_ALERT:`${process.env.MQTT_APP_ID}/devices/leakAlert`
+    DEVICES_LEAK_ALERT:`${process.env.MQTT_APP_ID}/devices/leakAlert`
 };
 
 const publishing={

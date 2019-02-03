@@ -23,6 +23,7 @@ const register = async function (server, options) {
             if (!dev) {
                 throw new Error("The device Id in the message is unknown!");
             } */
+            
             //trigger v1 routes
             if (topic.includes("/")) {
                 let url = "/api/v1" + topic.slice(topic.indexOf("/"));
