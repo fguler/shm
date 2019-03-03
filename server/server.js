@@ -57,12 +57,12 @@ const start = async () => {
         }
     });
 
-
+ 
     // start server
     await server.start();
 
     // start telegram bot
-    Bot.start();
+    await Bot.start(server);
 
     // start repetitive tasks
     BackTasks.run();

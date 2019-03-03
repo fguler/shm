@@ -17,13 +17,14 @@
     "dialogflow": "^0.7.0",
     "dotenv": "^6.2.0",
     "fast-csv": "^2.4.1",
-    "hapi": "^18.0.0",
+    "hapi": "^18.1.0",
     "joi": "^14.3.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.6",
+    "mongoose": "^5.4.16",
     "mqtt": "^2.18.8",
+    "ngrok": "^3.1.1",
     "ping": "^0.2.2",
-    "puppeteer": "^1.11.0",
-    "telegraf": "^3.26.0"
+    "puppeteer": "^1.12.2",
+    "telegraf": "^3.27.1"
   }
 }

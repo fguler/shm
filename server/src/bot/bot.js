@@ -2,11 +2,33 @@ const Telegraf = require('telegraf');
 const Mdlw = require("./middlewares");
 const OutgoingActions = require("./outgoingActions/index")
 const Response = require("./response/");
+const Ngrok = require('ngrok');
 
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
-const start = () => {
+const start = async (server) => {
+
+    const path = `/${process.env.TELEGRAM_WEB_HOOK_PATH}`;
+
+    let url = await Ngrok.connect({
+        addr: 7788
+    });
+
+    url = url + path;
+
+    await bot.telegram.setWebhook(url);
+
+    server.route({
+        method: "POST",
+        path: path,
+        handler: async (request, h) => {
+            bot.handleUpdate(request.payload);
+            //bot.handleUpdate(request.payload,request.raw.res);
+            return "ok."
+        }
+    });
+
 
     bot.use(Mdlw.auth);
 
@@ -16,7 +38,7 @@ const start = () => {
         console.log('Telegram Error :', err);
     });
 
-    bot.startPolling();
+    //bot.startPolling();
 
 };
 
@@ -29,7 +51,7 @@ module.exports = Object.assign({}, { start }, OutgoingActions(bot));
 
 
     bot.use(Mdlw.auth);
-    
+
     bot.start((ctx) => {
         return ctx.reply(msg);
     });
